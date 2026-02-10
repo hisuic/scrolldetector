@@ -4,6 +4,7 @@
   const BUTTON_CLASS = "sd-continue";
 
   let warningTimer = null;
+  let isActive = false;
 
   const ensureOverlay = () => {
     if (document.getElementById(OVERLAY_ID)) {
@@ -42,6 +43,9 @@
   };
 
   const showWarning = () => {
+    if (!isActive) {
+      return;
+    }
     ensureOverlay();
     const overlay = document.getElementById(OVERLAY_ID);
     if (!overlay) {
@@ -65,9 +69,64 @@
     warningTimer = window.setTimeout(showWarning, FIVE_MINUTES);
   };
 
-  const init = () => {
-    ensureOverlay();
+  const clearWarningTimer = () => {
+    if (warningTimer) {
+      clearTimeout(warningTimer);
+      warningTimer = null;
+    }
+  };
+
+  const isInstagram = () => location.hostname.endsWith("instagram.com");
+  const isX = () =>
+    location.hostname.endsWith("x.com") || location.hostname.endsWith("twitter.com");
+  const isYouTube = () => location.hostname.endsWith("youtube.com");
+  const isYouTubeShorts = () => isYouTube() && location.pathname.startsWith("/shorts");
+
+  const isTargetSite = () => isInstagram() || isX() || isYouTubeShorts();
+
+  const updateActiveState = () => {
+    const nextActive = isTargetSite();
+    if (nextActive === isActive) {
+      return;
+    }
+    isActive = nextActive;
+    if (!isActive) {
+      hideWarning();
+      clearWarningTimer();
+      return;
+    }
     scheduleNextWarning();
+  };
+
+  const watchUrlChanges = () => {
+    let lastHref = location.href;
+    const check = () => {
+      if (location.href !== lastHref) {
+        lastHref = location.href;
+        updateActiveState();
+      }
+    };
+
+    const originalPushState = history.pushState;
+    history.pushState = function (...args) {
+      originalPushState.apply(this, args);
+      check();
+    };
+
+    const originalReplaceState = history.replaceState;
+    history.replaceState = function (...args) {
+      originalReplaceState.apply(this, args);
+      check();
+    };
+
+    window.addEventListener("popstate", check);
+    window.addEventListener("hashchange", check);
+    window.setInterval(check, 800);
+  };
+
+  const init = () => {
+    updateActiveState();
+    watchUrlChanges();
   };
 
   init();
