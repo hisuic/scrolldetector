@@ -1,0 +1,5 @@
+# build files
+*.xpi
+
+# zip files
+*.zip
