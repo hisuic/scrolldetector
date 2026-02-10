@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "ScrollDetector",
+  "version": "0.1.0",
+  "description": "SNSやYouTubeショート視聴中に5分おきの警告を表示します。",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.instagram.com/*",
+        "*://*.x.com/*",
+        "*://*.twitter.com/*",
+        "*://*.youtube.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
