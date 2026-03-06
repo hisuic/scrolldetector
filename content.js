@@ -1,14 +1,27 @@
 (() => {
   const FIVE_MINUTES = 5 * 60 * 1000;
+  const THIRTY_MINUTES = 30 * 60 * 1000;
   const OVERLAY_ID = "sd-warning-overlay";
   const BUTTON_CLASS = "sd-continue";
 
   let warningTimer = null;
   let isActive = false;
+  let overlayContinueAction = null;
 
   const ensureOverlay = () => {
-    if (document.getElementById(OVERLAY_ID)) {
-      return;
+    const existingOverlay = document.getElementById(OVERLAY_ID);
+    if (existingOverlay) {
+      const existingTitle = existingOverlay.querySelector(".sd-title");
+      const existingMessage = existingOverlay.querySelector(".sd-message");
+      const existingButton = existingOverlay.querySelector(`.${BUTTON_CLASS}`);
+      if (existingTitle && existingMessage && existingButton) {
+        return {
+          overlay: existingOverlay,
+          title: existingTitle,
+          message: existingMessage,
+          button: existingButton,
+        };
+      }
     }
 
     const overlay = document.createElement("div");
@@ -32,7 +45,11 @@
 
     button.addEventListener("click", () => {
       hideWarning();
-      scheduleNextWarning();
+      if (overlayContinueAction) {
+        const action = overlayContinueAction;
+        overlayContinueAction = null;
+        action();
+      }
     });
 
     card.appendChild(title);
@@ -40,18 +57,50 @@
     card.appendChild(button);
     overlay.appendChild(card);
     document.documentElement.appendChild(overlay);
+
+    return { overlay, title, message, button };
   };
 
-  const showWarning = () => {
+  const formatThirtyMinutesLater = () => {
+    const later = new Date(Date.now() + THIRTY_MINUTES);
+    const hour = String(later.getHours()).padStart(2, "0");
+    const minute = String(later.getMinutes()).padStart(2, "0");
+    return `${hour}:${minute}`;
+  };
+
+  const showOverlay = ({ titleText, messageText, buttonText, onContinue }) => {
     if (!isActive) {
       return;
     }
-    ensureOverlay();
-    const overlay = document.getElementById(OVERLAY_ID);
-    if (!overlay) {
+    const parts = ensureOverlay();
+    if (!parts) {
       return;
     }
+    const { overlay, title, message, button } = parts;
+    title.textContent = titleText;
+    message.textContent = messageText;
+    button.textContent = buttonText;
+    overlayContinueAction = onContinue || null;
     overlay.classList.add("sd-visible");
+  };
+
+  const showWarning = () => {
+    showOverlay({
+      titleText: "警告",
+      messageText: "5分経過しました。続けますか？",
+      buttonText: "継続する",
+      onContinue: scheduleNextWarning,
+    });
+  };
+
+  const showEntryPrompt = () => {
+    const thirtyMinutesLater = formatThirtyMinutesLater();
+    showOverlay({
+      titleText: "確認",
+      messageText: `本当に見る必要がありますか？30分後は${thirtyMinutesLater}です。`,
+      buttonText: "見る",
+      onContinue: scheduleNextWarning,
+    });
   };
 
   const hideWarning = () => {
@@ -63,6 +112,9 @@
   };
 
   const scheduleNextWarning = () => {
+    if (!isActive) {
+      return;
+    }
     if (warningTimer) {
       clearTimeout(warningTimer);
     }
@@ -95,7 +147,8 @@
       clearWarningTimer();
       return;
     }
-    scheduleNextWarning();
+    clearWarningTimer();
+    showEntryPrompt();
   };
 
   const watchUrlChanges = () => {
