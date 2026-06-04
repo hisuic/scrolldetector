@@ -30,4 +30,4 @@ user leaves the target page.
 
 ## License
 
-Add license information as needed.
+MIT
