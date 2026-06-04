@@ -1,49 +1,33 @@
 # ScrollDetector
 
-SNS やショート動画の見過ぎを防ぐための Chrome 拡張です。
-Instagram / X(Twitter) / YouTube Shorts を開いたときに確認ダイアログを出し、その後は 5 分ごとに継続確認を表示します。
+ScrollDetector is a browser extension that helps reduce excessive social media
+and short-form video browsing.
 
-## 機能
+When you open Instagram, X/Twitter, or YouTube Shorts, it asks whether you really
+need to continue. If you choose to keep browsing, ScrollDetector shows another
+warning every 5 minutes.
 
-- 対象ページに入ると確認を表示
-  - `本当に見る必要がありますか？30分後はHH:MMです。`
-- 継続を押すと視聴開始
-- 視聴中は 5 分ごとに警告を表示
-  - `5分経過しました。続けますか？`
-- 対象ページから離れるとタイマーを停止
+## Overview
 
-## 対象サイト
+ScrollDetector is designed to add a short moment of friction before entering
+highly scrollable pages. The initial prompt shows the current time plus 30
+minutes, making the cost of continued browsing more concrete.
 
-- `*.instagram.com`
-- `*.x.com`
-- `*.twitter.com`
-- `*.youtube.com/shorts/*`
+After the user clicks `Watch`, the extension starts a timer. Every 5 minutes, it
+asks whether the user wants to continue. The timer stops automatically when the
+user leaves the target page.
 
-## インストール（開発者モード）
+## Prompts
 
-1. Chrome で `chrome://extensions` を開く
-2. 右上の「デベロッパー モード」を ON
-3. 「パッケージ化されていない拡張機能を読み込む」をクリック
-4. このフォルダ（`scrolldetector`）を選択
+- `Do you really need to watch this? In 30 minutes, it will be HH:MM.`
+- `5 minutes have passed. Do you want to continue?`
 
-## ファイル構成
+## Target Sites
 
-- `manifest.json`: 拡張機能の設定（MV3）
-- `content.js`: 表示条件判定・タイマー制御・UI ロジック
-- `content.css`: オーバーレイ UI スタイル
+- Instagram
+- X/Twitter
+- YouTube Shorts
 
-## 動作確認
+## License
 
-1. Instagram / X / YouTube Shorts のいずれかを開く
-2. 初回確認ダイアログが表示されることを確認
-3. 「見る」を押して 5 分待ち、警告ダイアログが表示されることを確認
-4. 対象外ページへ移動し、警告が出なくなることを確認
-
-## カスタマイズ
-
-- 警告間隔を変更: `content.js` の `FIVE_MINUTES`
-- 初回メッセージ時間（30分後）を変更: `content.js` の `THIRTY_MINUTES`
-
-## ライセンス
-
-必要に応じて追記してください。
+Add license information as needed.
