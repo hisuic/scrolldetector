@@ -2,8 +2,7 @@
   "manifest_version": 3,
   "name": "ScrollDetector",
   "version": "0.1.0",
-  "description": "SNSやYouTubeショート視聴中に5分おきの警告を表示します。",
-  "permissions": ["storage"],
+  "description": "Shows a warning every 5 minutes while browsing social media or YouTube Shorts.",
   "content_scripts": [
     {
       "matches": [
@@ -16,5 +15,13 @@
       "css": ["content.css"],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "scrolldetector@example.com",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
 }

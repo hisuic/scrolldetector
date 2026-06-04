@@ -32,16 +32,16 @@
 
     const title = document.createElement("h1");
     title.className = "sd-title";
-    title.textContent = "警告";
+    title.textContent = "Warning";
 
     const message = document.createElement("p");
     message.className = "sd-message";
-    message.textContent = "5分経過しました。続けますか？";
+    message.textContent = "5 minutes have passed. Do you want to continue?";
 
     const button = document.createElement("button");
     button.className = BUTTON_CLASS;
     button.type = "button";
-    button.textContent = "継続する";
+    button.textContent = "Continue";
 
     button.addEventListener("click", () => {
       hideWarning();
@@ -86,9 +86,9 @@
 
   const showWarning = () => {
     showOverlay({
-      titleText: "警告",
-      messageText: "5分経過しました。続けますか？",
-      buttonText: "継続する",
+      titleText: "Warning",
+      messageText: "5 minutes have passed. Do you want to continue?",
+      buttonText: "Continue",
       onContinue: scheduleNextWarning,
     });
   };
@@ -96,9 +96,9 @@
   const showEntryPrompt = () => {
     const thirtyMinutesLater = formatThirtyMinutesLater();
     showOverlay({
-      titleText: "確認",
-      messageText: `本当に見る必要がありますか？30分後は${thirtyMinutesLater}です。`,
-      buttonText: "見る",
+      titleText: "Check",
+      messageText: `Do you really need to watch this? In 30 minutes, it will be ${thirtyMinutesLater}.`,
+      buttonText: "Watch",
       onContinue: scheduleNextWarning,
     });
   };
